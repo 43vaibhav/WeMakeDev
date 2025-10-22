@@ -1,87 +1,139 @@
-🧠 Neuro-Symbolic AI Scientist Agent
-This project implements a distributed AI Research Scientist designed to accelerate discovery in fields like Alzheimer’s disease (AD) by generating, validating, and designing scientifically rigorous, actionable experiments.
+# 🧠 Neuro-Symbolic AI Scientist Agent
 
-🎯 Project Goal
-To automate the full scientific discovery process—from literature retrieval to laboratory blueprint—by combining the creative intuition of Large Language Models (LLMs) with the logical rigor of Symbolic AI.
+This project implements a **distributed AI Research Scientist** designed to accelerate discovery in fields like Alzheimer’s disease (AD) by generating, validating, and designing scientifically rigorous, actionable experiments.
 
-✨ Key Features & Innovation
-Feature	Description	Sources
-Scientific Rigor (The Symbolic Edge)	Hypotheses are formally validated using the Z3 SMT Solver to check for logical inconsistencies against a knowledge base of known AD facts (e.g., Aβ clearance does not guarantee cognitive improvement).	
-Actionable Output	The system generates a comprehensive Experiment Blueprint (including required models like 5xFAD mice, detailed treatment groups, specific outcome measures like Morris water maze, and duration). The output is available as JSON, LaTeX, and PDF.	
-Scalable Architecture	Built on 4 core microservices using Docker and FastAPI, enabling parallel development and independent testing. All communication uses JSON over HTTP.	
-Advanced LLM Integration	Leverages LLaMA 3 (via the Cerebras API) as the "neural brain" for both creative hypothesis generation (identifying knowledge gaps) and structured experiment synthesis.	
-Professional Demo	A central Streamlit Dashboard (Port 8501) orchestrates the entire pipeline, visually displaying the step-by-step process from query to final blueprint.	
-🏗️ Architecture and Workflow Pipeline
-The pipeline is split between two roles: Person A (Neural Intelligence) and Person B (Symbolic & Interface).
+---
 
-Step	Service Name (Port)	Owner Role	Purpose & Technology
-1. Retrieval	ingest-search (8000)	Person A	Finds the top 3 relevant Alzheimer’s papers based on a user query using semantic search (FAISS/Chroma).
-2. Generation	hypothesis-gen (8001)	Person A	Identifies a knowledge gap and proposes a testable hypothesis (e.g., "Combining X with Y will improve Z outcomes") using LLaMA 3.
-3. Validation	z3-validator (8002)	Person B	Checks if the hypothesis logically contradicts known biological facts defined in the knowledge base using the Z3 SMT Solver.
-4. Design	experiment-design (8003)	Person B	Converts the validated hypothesis into a detailed experimental blueprint using LLaMA 3.
-Interface	dashboard (8501)	Person B	Streamlit UI that calls all services sequentially and displays the final result and download options.
-🚀 Getting Started
-Prerequisites
+## 🎯 Project Goal
 
-Docker Desktop (with Docker Compose)
-Git
-Optional (for local development without Docker): Python 3.10+ and a virtual environment manager
-Required environment variables
+To **automate the scientific discovery process** — from literature retrieval to laboratory blueprint — by combining the **creative intuition of Large Language Models (LLMs)** with the **logical rigor of Symbolic AI**.
 
-CEREBRAS_API_KEY — access for LLaMA 3 (Cerebras)
-PINECONE_API_KEY — (optional) Pinecone index key used by the ingest/search code
-Create an example .env
+---
 
-Copy the included .env.example to .env and populate your keys:
+## ✨ Key Features & Innovations
 
-# .env (example)
+| Feature | Description | Technologies |
+|---------|------------|-------------|
+| **Scientific Rigor (Symbolic Edge)** | Hypotheses are formally validated using the **Z3 SMT Solver**, ensuring logical consistency against a knowledge base of known AD facts (e.g., “Aβ clearance does not guarantee cognitive improvement”). | Z3, Python |
+| **Actionable Output** | Generates a **full experiment blueprint**, including models (e.g., **5xFAD mice**), treatment groups, outcomes (e.g., **Morris water maze**), and study duration. Exportable as **JSON, LaTeX, PDF**. | Python, LaTeX, JSON |
+| **Scalable Architecture** | Built on **4 independent microservices** using Docker and FastAPI, enabling parallel development and modular testing. | Docker, FastAPI, JSON/HTTP |
+| **Advanced LLM Integration** | Uses **LLaMA 3** (via Cerebras API) for both creative hypothesis generation and structured experiment design. | LLaMA 3, Cerebras API |
+| **Professional Dashboard** | A **Streamlit UI** (Port 8501) orchestrates the pipeline, displaying each step from query to final blueprint. | Streamlit, Python |
+
+---
+
+## 🏗️ Architecture & Workflow
+
+The pipeline separates **neural** and **symbolic** roles:
+
+| Step | Service Name (Port) | Owner Role | Purpose & Technology |
+|------|-------------------|------------|-------------------|
+| 1 | `ingest-search` (8000) | Neural (Person A) | Retrieves top 3 relevant Alzheimer’s papers using semantic search. | FAISS/Chroma |
+| 2 | `hypothesis-gen` (8001) | Neural (Person A) | Generates a testable hypothesis from knowledge gaps. | LLaMA 3 |
+| 3 | `z3-validator` (8002) | Symbolic (Person B) | Validates hypothesis against known biological facts. | Z3 SMT Solver |
+| 4 | `experiment-design` (8003) | Symbolic (Person B) | Converts validated hypotheses into a detailed experimental blueprint. | LLaMA 3 |
+| Interface | `dashboard` (8501) | Symbolic (Person B) | Streamlit UI for end-to-end orchestration and downloads. | Streamlit |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Docker Desktop (with Docker Compose)  
+- Git  
+- Python 3.10+ (optional, for local development without Docker)  
+
+### Environment Variables
+
+Create `.env` from `.env.example`:
+
 CEREBRAS_API_KEY=your_cerebras_api_key_here
 PINECONE_API_KEY=your_pinecone_api_key_here
-# Optional override used by frontend when running outside Docker
 BACKEND_URL=http://localhost:8000
-Run with Docker (recommended)
 
-From the repository root, build and start the services using Docker Compose (this will build the backend and frontend images defined in the repo):
-# Build and run in detached mode
+yaml
+Copy code
+
+---
+
+### Run with Docker (Recommended)
+
+```powershell
+# Build and start all services
 docker compose up --build -d
 
-# Confirm containers are running
+# Check running containers
 docker compose ps
-Open the Streamlit dashboard in your browser:
-http://localhost:8501
-Follow logs (optional):
-# Dashboard logs (frontend)
-docker compose logs -f frontend
 
-# Backend logs
-docker compose logs -f backend
-To stop and remove containers:
+# Stop and remove containers
 docker compose down
-Run locally without Docker (developer mode) — Windows PowerShell
+Open the Streamlit dashboard:
 
-Create and activate a virtual environment then install dependencies. There are requirements.txt files for backend and frontend; install both:
-# from repo root
+arduino
+Copy code
+http://localhost:8501
+Run Locally Without Docker
+Activate virtual environment:
+
+powershell
+Copy code
 python -m venv .venv
-.\\.venv\\Scripts\\Activate.ps1
+.\\.venv\Scripts\Activate.ps1
+Install dependencies:
+
+powershell
+Copy code
 pip install -r backend/requirements.txt
 pip install -r frontend/requirements.txt
-Export environment variables (PowerShell):
-$env:CEREBRAS_API_KEY = "your_cerebras_api_key_here"
-$env:PINECONE_API_KEY = "your_pinecone_api_key_here"
-$env:BACKEND_URL = "http://localhost:8000"
-Start backend (FastAPI)
-cd backend
+Load environment variables:
+
+powershell
+Copy code
+Get-Content .\.env | ForEach-Object {
+    if ($_ -match "=") {
+        $parts = $_ -split "="
+        $name = $parts[0].Trim()
+        $value = $parts[1].Trim()
+        Set-Item -Path Env:$name -Value $value
+    }
+}
+Start each service in separate terminals:
+
+powershell
+Copy code
+# Ingest-Search
+cd .\person_A\ingest-search
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-Start frontend (Streamlit) in a separate terminal
-cd frontend
+
+# Hypothesis-Gen
+cd .\person_A\hypothesis-gen
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+
+# Z3-Validator
+cd .\person_B\z3-validator
+uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+
+# Experiment-Design
+cd .\person_B\experiment-design
+uvicorn main:app --host 0.0.0.0 --port 8003 --reload
+
+# Dashboard
+cd .\frontend
 streamlit run app.py --server.port 8501
-Tips and troubleshooting
+Tips & Troubleshooting
+If API keys are missing, hypothesis generation or experiment design may return placeholders.
 
-If LLaMA/Cerebras API keys are missing the services will attempt safe fallbacks, but hypothesis generation or experiment design may return template responses.
-On Windows you may need to install Visual C++ build tools for the z3-solver package.
-The Docker Compose file exposes backend on port 8000 and frontend on port 8501. If these ports are in use, update docker-compose.yml and the BACKEND_URL environment variable accordingly.
-Helper scripts
+On Windows, install Visual C++ Build Tools for z3-solver.
 
-dev_start.ps1 — helper to build and start the Docker Compose stack.
-dev_stop.ps1 — stops and removes the stack.
-If you'd like, I can also add a GitHub Actions workflow that builds the images and runs a quick smoke test.
+Ports: backend 8000–8003, frontend 8501. Update .env if conflicts occur.
+
+Helper Scripts
+dev_start.ps1 — build and start Docker stack
+
+dev_stop.ps1 — stop and remove Docker stack
+
+License & Contributing
+MIT License
+
+Contributions welcome via pull requests — please follow code style and document changes.
